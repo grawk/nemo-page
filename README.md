@@ -1,8 +1,9 @@
 # nemo-page
+
 ## Overview
 Page is a plugin for the nemo test framework which brings a more page-structured approach to testing your data. The intention behind Page is that you would structure your locator file how it is laid out in your app (more or less).
 
-### Installation
+## Installation
 
 1. Add dependencies to package.json and install.
 
@@ -77,7 +78,7 @@ Clears the cached base element of the object.
 This model is mostly for organization of commonly located elements. Often, Object models will have a `_base` which all the nested elements fall within.
 
 `_model` - "object"
-Extends - Base Model
+Extends - [Base Model](#base-model)
 
 #### Additional locator fields
 The Object model is not a standard locator. It does not contain the `locator` or `type` fields. Instead, It will have other locators nested inside of it.
@@ -115,7 +116,7 @@ Sets the data for any specified nested objects which also have a setValue method
 This model serves to identify sets of elements on a page (eg, a list or navigation items).
 
 `_model` - "array"
-Extends - Base Model
+Extends - [Base Model](#base-model)
 
 #### Additional locator fields
 Like Object, the Array model is not a standard locator. The fields associated with an Array object are determined by the model specified by the `_itemModel` field.
@@ -145,7 +146,7 @@ Retrieves the item of the array at the specified index.
 The Element model is the interface model used for anything that resolves to an element on the page.
 
 `_model` - Abstract... cannot be instantiated from `_model`
-Extends - Base Model
+Extends - [Base Model](#base-model)
 
 #### Methods
 
@@ -261,7 +262,7 @@ Waits for the specified attribute on the element on the page to contain text oth
 The Text model is an extension of the Element model where data collection is based on the text of the element.
 
 `_model` - "text"
-Extends - Element Model
+Extends - [Element Model](#element-model)
 
 #### Methods
 
@@ -276,7 +277,7 @@ Collects the text value of the element.
 The HTML model is an extension of the Element model where data collection is based on the inner html of the element.
 
 `_model` - "html"
-Extends - Element Model
+Extends - [Element Model](#element-model)
 
 #### Methods
 
@@ -291,7 +292,7 @@ Collects the inner html of the element.
 The Text model is an extension of the Element model where data collection is based on the presence of the element.
 
 `_model` - "present"
-Extends - Element Model
+Extends - [Element Model](#element-model)
 
 #### Methods
 
@@ -306,7 +307,7 @@ Collects the value indicating the presenece of the element.
 The Attribute model is an extension of the Element model where data collection is based on the value of the specified attribute of the element.
 
 `_model` - "attribute"
-Extends - Element Model
+Extends - [Element Model](#element-model)
 
 #### Additional locator fields
 
@@ -325,7 +326,7 @@ Collects the value of the specified attribute of the element.
 The Input model is an extension of the Element model where data collection is based on the input value of the element.
 
 `_model` - "input"
-Extends - Element Model
+Extends - [Element Model](#element-model)
 
 #### Methods
 
