@@ -1,15 +1,15 @@
 {
   "name": "nemo-page",
   "version": "0.0.1",
-  "description": "View Interface for nemo views enhanced with nested locators and collection mechanics.",
+  "description": "View Interface for nemo enhanced with nested locators and collection mechanics.",
   "main": "index.js",
-  "registerAs": "view",
+  "registerAs": "page",
   "scripts": {
     "test": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/paypal/nemo-page.git"
+    "url": "https://github.com/OuranosSkia/nemo-page.git"
   },
   "dependencies": {
     "debug": "^2.1.0",

@@ -1,0 +1,50 @@
+{
+    "_base": {
+        "locator": "#base1",
+        "type": "css"
+    },
+
+    "form": {
+        "_model": "object",
+
+        "_base": {
+            "locator": "#base2",
+            "type": "css"
+        },
+
+        "input1": {
+            "_model": "input",
+            "locator": "input[name='input1']",
+            "type": "css"
+        },
+        "input2": {
+            "_model": "input",
+            "locator": "input[name='input2']",
+            "type": "css"
+        }
+    },
+    "list": {
+        "_model": "array",
+        "_itemModel": "object",
+
+        "_itemsLocator": {
+            "locator": "#list1 li",
+            "type": "css"
+        },
+
+        "part1": {
+            "locator": "list-part-1",
+            "type": "css"
+        },
+        "part2": {
+            "locator": "list-part-2",
+            "type": "css"
+        }
+    },
+    "attr": {
+        "_model": "attribute",
+        "_attribute": "attr",
+        "locator": "#attr",
+        "type": "css"
+    }
+}
