@@ -50,7 +50,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return drivex.present(locator, baseElement);
         },
 
-        isVisible: function (baseOverride) {
+        isDisplayed: function (baseOverride) {
             return base.get(baseOverride).isDisplayed();
         },
 
