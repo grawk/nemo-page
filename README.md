@@ -24,7 +24,10 @@ Page is a plugin for the nemo test framework which brings a more page-structured
   "plugins": {
     "page": {
       "module": "nemo-page",
-      "arguments": ["path:locator"]
+      "arguments": [
+          "path:locator",
+          "path:models"
+      ]
     }
   },
   "data": {
@@ -45,6 +48,11 @@ The `locatorDefinition` can either be a JSON object like this:
 ```
 
 The `type` field is any of the locator strategies here: http://seleniumhq.github.io/selenium/docs/api/javascript/namespace.
+
+## General Use
+When you initialize nemo-page, it will attach itself in your app to the `nemo.page` object. It will then create an Object model as the base for each locator json in your locators folder. For example, if you have `myLocators.json`, you can access it as `nemo.page.myLocators`.
+
+The base object from a locator is an *actual* Object model and as such has all the same functions and uses. Any nested locators (for example, if you define a locator `loc1` on the root level of your locator file) can be accessed by `nemo.page.myLocators.loc1`.
 
 ### Page extra locator fields
 The following extra fields can be added to a locator definition to change how Page handles that locator.
@@ -75,7 +83,7 @@ Clears the cached base element of the object.
 `@argument isRecursive {Boolean}` - Whether to keep clearing the cached bases of the parent objects.
 
 ### Object Model
-This model is mostly for organization of commonly located elements. Often, Object models will have a `_base` which all the nested elements fall within.
+This model is mostly for organization of commonly located elements. Often, Object models will have a `_base` which all the nested elements fall within. All object models will have fields on them for each nested locator. For example if your Object model `obj` contains `loc1` as a nested locator, you can do `obj.loc1` and perform operations from that specific to loc1's model.
 
 `_model` - "object"
 
@@ -142,7 +150,7 @@ Retrieves the item of the array at the specified index.
 
 `@argument baseOverride {WebElement}` - An optional override for the base element it uses to find the items.
 
-`@returns {Promise}` - Resolves to the item at the specific index. **NOTE** The promise directly returned is *not* an WebElement, but the item in the `promise.then` function is.
+`@returns {Model}` - Resolves to a page Model object based on the `_itemModel` field representing the item at that specific index.
 
 ### Element Model
 The Element model is the interface model used for anything that resolves to an element on the page.
@@ -349,3 +357,28 @@ Collects the input value of the element.
 Sets the input value for the element.
 
 `@argument data {String}` - The data to be set.
+
+### Select Model
+The Select model is an extension of the Element model where data collection is based on the input value of a select element as well as handling set operations specifically for select elements.
+
+`_model` - "select"
+
+Extends - [Element Model](#element-model)
+
+#### Methods
+
+##### collect(baseOverride)
+Collects the input value of the element.
+
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses for collection.
+
+`@returns {Promise}` - Resolves to a string containing the input value of the element. If the element is not present, resolves to undefined instead.
+
+##### setValue(data)
+Sets the option for the select.
+
+`@argument data {String}` - The value of the option element to be set.
+
+## Creating Custom Models
+
+Custom models can be used by specifying a models folder as the second argument. It will assume that each js file is a unique model where the `_model` key is the name of the file. Models do not directly enforce any kind of structure, but it is a good idea to at least extend the functionality of Base (for non-element models) or Element (for element-level models). You can access any of the existing models on `require('nemo-page').typeMappings`. 

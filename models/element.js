@@ -35,7 +35,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
         },
 
         click: function (baseOverride) {
-            base.get(baseOverride).click();
+            return base.get(baseOverride).click();
         },
 
         isPresent: function (baseOverride) {
@@ -52,6 +52,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
 
         isDisplayed: function (baseOverride) {
             return base.get(baseOverride).isDisplayed();
+        },
+
+        isEnabled: function (baseOverride) {
+            return base.get(baseOverride).isEnabled();
         },
 
         waitForPresent: function (baseElement) {
@@ -139,5 +143,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
 
     return base;
 };
+
+ElementModel.isAbstract = true;
 
 module.exports = ElementModel;

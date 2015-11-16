@@ -46,4 +46,6 @@ var BaseModel = function(config, parent, nemo, drivex) {
     };
 };
 
+BaseModel.isAbstract = true;
+
 module.exports = BaseModel;

@@ -1,6 +1,7 @@
 'use strict';
 
 var BaseModel = require('./base'),
+    ArrayItemModel = require('./arrayItem'),
     _ = require('lodash'),
     debug = require('debug'),
     log = debug('nemo-page:log'),
@@ -18,6 +19,10 @@ var ArrayModel = function (config, parent, nemo, drivex) {
 
     if (config['_itemModel']) {
         itemModel = mappings[config['_itemModel']];
+
+        if (itemModel.isAbstract) {
+            throw new Error('[nemo-page] Cannot create models that are abstract');
+        }
     } else {
         itemModel = mappings.text;
     }
@@ -59,7 +64,9 @@ var ArrayModel = function (config, parent, nemo, drivex) {
         },
 
         item: function (itemIndex, baseOverride) {
-            var baseElement;
+            var baseElement,
+                arrayItem,
+                itemPromise;
 
             if (baseOverride) {
                 baseElement = baseOverride;
@@ -67,22 +74,13 @@ var ArrayModel = function (config, parent, nemo, drivex) {
                 baseElement = base._getBase();
             }
 
-            return drivex.finds(itemsLocator, baseElement).then(function (items) {
-                var getItemObj = itemModel(config, null, nemo, drivex),
-                    item = items[itemIndex];
+            itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.finds(itemsLocator, baseElement).then(function (items) {
+                return items[itemIndex];
+            }));
 
-                // Override _getBase to always return the item retrieved here
-                getItemObj._getBase = function () {
-                    return item;
-                }
+            arrayItem = ArrayItemModel(itemPromise);
 
-                // Also override getElement in case it's an element type. This will let the rest of the functions work correctly.
-                getItemObj.get = function () {
-                    return item;
-                }
-
-                return getItemObj;
-            })
+            return itemModel(config, arrayItem, nemo, drivex);
         }
     });
 

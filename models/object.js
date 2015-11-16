@@ -72,6 +72,10 @@ var ObjectModel = function (config, parent, nemo, drivex) {
             modelObj = mappings.text;
         } else {
             modelObj = mappings[value['_model']];
+
+            if (modelObj.isAbstract) {
+                throw new Error('[nemo-page] Cannot create models that are abstract');
+            }
         }
 
         fields[key] = modelObj(value, base, nemo, drivex);
