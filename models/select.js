@@ -42,7 +42,6 @@ var SelectModel = function (config, parent, nemo, drivex) {
                     locator: 'option[value="' + data + '"]',
                     type: 'css'
                 });
-            element.click();
             drivex.find(optionLoc, element).click();
         }
     });
