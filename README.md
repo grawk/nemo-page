@@ -152,6 +152,30 @@ Retrieves the item of the array at the specified index.
 
 `@returns {Model}` - Resolves to a page Model object based on the `_itemModel` field representing the item at that specific index.
 
+##### waitForPresent(baseElement)
+Waits for an element of the array to become present on the page. **NOTE** waitForPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+
+`@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` Resolves sucessfully if the element becomes present within the wait timeout and unsuccessfully if it does not.
+
+##### waitForNotPresent(baseElement)
+Waits for no elements of the array to be present on the page. **NOTE** waitForNotPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+
+`@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` Resolves sucessfully if the element becomes not present within the wait timeout and unsuccessfully if it does not.
+
+##### waitForDisplayed(baseElement)
+Waits for an element of the array to become displayed on the page. **NOTE** waitForDisplayed calls waitForPresent first. While waitForDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+
+`@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` Resolves sucessfully if the element becomes displayed within the wait timeout and unsuccessfully if it does not.
+
+##### waitForNotDisplayed(baseElement)
+Waits for no elements of the array to be displayed on the page. It still, however, expects at least one element to be present. If you expect the elements to no longer be present, use `waitForNotPresent` instead. **NOTE** waitForNotDisplayed calls waitForPresent first. While waitForNotDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+
 ### Element Model
 The Element model is the interface model used for anything that resolves to an element on the page.
 
@@ -215,7 +239,7 @@ Waits for the element to become displayed on the page. **NOTE** waitForDisplayed
 
 `@returns {Promise}` Resolves sucessfully if the element becomes displayed within the wait timeout and unsuccessfully if it does not.
 
-##### waitForNotPresent(baseElement)
+##### waitForNotDisplayed(baseElement)
 Waits for the element to become no longer displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead. **NOTE** waitForNotDisplayed calls waitForPresent first. While waitForNotDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
@@ -381,4 +405,4 @@ Sets the option for the select.
 
 ## Creating Custom Models
 
-Custom models can be used by specifying a models folder as the second argument. It will assume that each js file is a unique model where the `_model` key is the name of the file. Models do not directly enforce any kind of structure, but it is a good idea to at least extend the functionality of Base (for non-element models) or Element (for element-level models). You can access any of the existing models on `require('nemo-page').typeMappings`. 
+Custom models can be used by specifying a models folder as the second argument. It will assume that each js file is a unique model where the `_model` key is the name of the file. Models do not directly enforce any kind of structure, but it is a good idea to at least extend the functionality of Base (for non-element models) or Element (for element-level models). You can access any of the existing models on `require('nemo-page').typeMappings`.

@@ -1,6 +1,6 @@
 {
     "name": "nemo-page",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "View Interface for nemo enhanced with nested locators and collection mechanics.",
     "main": "index.js",
     "registerAs": "page",

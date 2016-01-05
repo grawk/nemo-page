@@ -7,6 +7,8 @@ var BaseModel = require('./base'),
     log = debug('nemo-page:log'),
     normalize = require('../lib/normalize');
 
+var WAIT_TIMEOUT = 8000;
+
 var ArrayModel = function (config, parent, nemo, drivex) {
     log('ArrayModel: Initializing Array Model');
 
@@ -81,7 +83,39 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             arrayItem = ArrayItemModel(itemPromise);
 
             return itemModel(config, arrayItem, nemo, drivex);
-        }
+        },
+
+        waitForPresent: function (baseElement) {
+            return nemo.driver.wait(function () {
+                return drivex.present(itemsLocator, baseElement);
+            }, WAIT_TIMEOUT);
+        },
+
+        waitForNotPresent: function (baseElement) {
+            return nemo.driver.wait(function () {
+                return drivex.present(itemsLocator, baseElement).then(function (isPresent) {
+                    return !isPresent;
+                });
+            }, WAIT_TIMEOUT);
+        },
+
+        waitForDisplayed: function (baseElement) {
+            return base.waitForPresent(baseElement).then(function () {
+                return nemo.driver.wait(function () {
+                    return drivex.find(itemsLocator, baseElement).isDisplayed();
+                }, WAIT_TIMEOUT);
+            });
+        },
+
+        waitForNotDisplayed: function (baseElement) {
+            return base.waitForPresent(baseElement).then(function () {
+                return nemo.driver.wait(function () {
+                    return drivex.find(itemsLocator, baseElement).isDisplayed().then(function (isDisplayed) {
+                        return !isDisplayed;
+                    });
+                }, WAIT_TIMEOUT);
+            });
+        },
     });
 
     return base;
