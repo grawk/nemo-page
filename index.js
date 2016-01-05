@@ -11,7 +11,7 @@ var _ = require('lodash'),
 
 module.exports.typeMappings = typeMappings;
 
-module.exports.setup = function (locatorDirectory, modelsDirectory, nemo, _callback) {
+module.exports.setup = function (locatorDirectory, modelDirectory, nemo, _callback) {
     log('Initializing nemo-page');
     var callback = _.once(_callback),
         drivex = Drivex(nemo.driver, nemo.wd);
@@ -19,13 +19,13 @@ module.exports.setup = function (locatorDirectory, modelsDirectory, nemo, _callb
     // Add page namespace to nemo
     nemo.page = {};
 
-    if (modelsDirectory !== null) {
-        glob("**/*.json", { cwd: modelsDirectory }, function (err, files) {
+    if (modelDirectory !== null) {
+        glob("**/*.js", { cwd: modelDirectory }, function (err, files) {
             log('Starting to process models:', files);
             _.each(files, function (file) {
-                var fileObj = require(path.resolve(locatorDirectory, file)),
+                var fileObj = require(path.resolve(modelDirectory, file)),
                     modelPathArray = file.split('/'),
-                    fileName = modelPathArray[modelPathArray.length - 1].split('.json')[0];
+                    fileName = modelPathArray[modelPathArray.length - 1].split('.js')[0];
 
                 try {
                     log('Attempting to process model ' + fileName);
