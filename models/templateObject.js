@@ -9,15 +9,23 @@ var BaseModel = require('./base'),
 
 var WAIT_TIMEOUT = 8000;
 
-var ArrayModel = function (config, parent, nemo, drivex) {
-    log('ArrayModel: Initializing Array Model');
+var TemplateObjectModel = function (config, parent, nemo, drivex) {
+    log('TemplateObjectModel: Initializing Array Model');
 
     // Initialize the base model object
     var mappings = require('../lib/typeMappings').getMappings(),
         base = BaseModel(config, parent, nemo, drivex),
-        itemsLocator = normalize(nemo, config['_itemsLocator']),
+        itemsLocatorTemplate = _.template(config['_locatorTemplate'].locator),
+        itemsLocatorType = config['_locatorTemplate'].type,
         itemModel,
         itemObj;
+
+    var getItemLocator = function (data) {
+        return normalize(nemo, {
+            locator: itemsLocatorTemplate(data),
+            type: itemsLocatorType
+        });
+    };
 
     if (config['_itemModel']) {
         itemModel = mappings[config['_itemModel']];
@@ -33,7 +41,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
 
     // Extend the base model with this models functions
     _.extend(base, {
-        collect: function (baseOverride) {
+        collectItem: function (data, baseOverride) {
             var baseElement;
 
             if (baseOverride) {
@@ -42,32 +50,13 @@ var ArrayModel = function (config, parent, nemo, drivex) {
                 baseElement = base._getBase(true);
             }
 
-            return drivex.finds(itemsLocator, baseElement).then(function (items) {
-                var promiseList = [],
-                    data = [];
-
-                _.each(items, function (arrItem) {
-                    var promise = itemObj.collect(arrItem).then(function (value) {
-                        if (value) {
-                            data.push(value);
-                        }
-                    });
-
-                    promiseList.push(promise);
-                });
-
-                return nemo.wd.promise.all(promiseList).then(function () {
-                    base._clearBase(true);
-                    if (!_.isEmpty(data)) {
-                        return data;
-                    }
-                });
-            });
+            return base.item(data, baseOverride).collect();
         },
 
-        item: function (itemIndex, baseOverride) {
-            var baseElement,
-                arrayItem,
+        item: function (data, baseOverride) {
+            var itemLocator = getItemLocator(data),
+                baseElement,
+                staticItem,
                 itemPromise;
 
             if (baseOverride) {
@@ -76,41 +65,47 @@ var ArrayModel = function (config, parent, nemo, drivex) {
                 baseElement = base._getBase();
             }
 
-            itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.finds(itemsLocator, baseElement).then(function (items) {
-                return items[itemIndex];
-            }));
+            itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.find(itemLocator, baseElement));
 
-            arrayItem = StaticItemModel(itemPromise);
+            staticItem = StaticItemModel(itemPromise);
 
-            return itemModel(config, arrayItem, nemo, drivex);
+            return itemModel(config, staticItem, nemo, drivex);
         },
 
-        waitForPresent: function (baseElement) {
+        waitForPresent: function (data, baseElement) {
+            var itemLocator = getItemLocator(data);
+
             return nemo.driver.wait(function () {
-                return drivex.present(itemsLocator, baseElement);
+                return drivex.present(itemLocator, baseElement);
             }, WAIT_TIMEOUT);
         },
 
-        waitForNotPresent: function (baseElement) {
+        waitForNotPresent: function (data, baseElement) {
+            var itemLocator = getItemLocator(data);
+
             return nemo.driver.wait(function () {
-                return drivex.present(itemsLocator, baseElement).then(function (isPresent) {
+                return drivex.present(itemLocator, baseElement).then(function (isPresent) {
                     return !isPresent;
                 });
             }, WAIT_TIMEOUT);
         },
 
-        waitForDisplayed: function (baseElement) {
+        waitForDisplayed: function (data, baseElement) {
+            var itemLocator = getItemLocator(data);
+
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemsLocator, baseElement).isDisplayed();
+                    return drivex.find(itemLocator, baseElement).isDisplayed();
                 }, WAIT_TIMEOUT);
             });
         },
 
-        waitForNotDisplayed: function (baseElement) {
+        waitForNotDisplayed: function (data, baseElement) {
+            var itemLocator = getItemLocator(data);
+
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemsLocator, baseElement).isDisplayed().then(function (isDisplayed) {
+                    return drivex.find(itemLocator, baseElement).isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
                     });
                 }, WAIT_TIMEOUT);
@@ -121,4 +116,4 @@ var ArrayModel = function (config, parent, nemo, drivex) {
     return base;
 };
 
-module.exports = ArrayModel;
+module.exports = TemplateObjectModel;

@@ -38,6 +38,40 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return base.get(baseOverride).click();
         },
 
+        dragAndDropTo: function (dropItem) {
+            var dragElement = base.get(),
+                dropElement = dropItem.get();
+
+            dragElement.click();
+            dropElement.click();
+
+            return dropElement.getLocation().then(function (loc) {
+                return dropElement.getSize().then(function (size) {
+                    var dragOffset = {
+                            x: 15,
+                            y: 15
+                        },
+                        dropOffset = {
+                            x: 15,
+                            y: size.height / 2
+                        };
+
+                    nemo.driver.actions()
+                        .mouseMove(dragElement)
+                        .mouseDown()
+                        .mouseMove(dragElement, dragOffset)
+                        .mouseMove(dropElement, dropOffset)
+                        .perform();
+
+                    nemo.driver.sleep(500);
+
+                    return nemo.driver.actions()
+                        .mouseUp()
+                        .perform();
+                });
+            });
+        },
+
         isPresent: function (baseOverride) {
             var baseElement;
 
