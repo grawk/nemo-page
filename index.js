@@ -20,6 +20,7 @@ module.exports.setup = function (locatorDirectory, modelDirectory, nemo, _callba
     nemo.page = {};
 
     if (modelDirectory !== null) {
+        typeMappings.resetMappings();
         glob("**/*.js", { cwd: modelDirectory }, function (err, files) {
             log('Starting to process models:', files);
             _.each(files, function (file) {
