@@ -34,7 +34,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
             throw new Error('[nemo-page] Cannot create models that are abstract');
         }
     } else {
-        itemModel = mappings.text;
+        itemModel = mappings.element;
     }
 
     itemObj = itemModel(config, undefined, nemo, drivex);
@@ -67,7 +67,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
 
             itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.find(itemLocator, baseElement));
 
-            staticItem = StaticItemModel(itemPromise);
+            staticItem = StaticItemModel(itemPromise, nemo);
 
             return itemModel(config, staticItem, nemo, drivex);
         },

@@ -1,9 +1,16 @@
 # Element Model
-The Element model is the interface model used for anything that resolves to an element on the page.
+The Element model is the model used for anything that resolves to an element on the page.
 
-`_model` - Abstract... cannot be instantiated from `_model`
+`_model` - "element"
 
 Extends - [Base Model](base.md)
+
+## Additional locator fields
+The element model takes the following additional locator fields
+
+* `_data` - {String} (Optional) This field specifies what to collect when using the `collect` method. Defaults to `text`.
+* `locator` - {String} (Optional) This is the locator string used to look up the element by the `type` specified. If not specified, it will look up the closest base element instead for all functionalities.
+* `type` - {String} (Optional) This is the type of lookup to perform. This accepts any selenium type such as `css`, `xpath`, `id`, etc...
 
 ## Methods
 
@@ -25,6 +32,13 @@ Clicks the element on the page.
 `@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` - Returns the promise from clicking the element.
+
+### hover(baseOverride)
+Hovers over the element on the page.
+
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` - Returns the promise from hovering over the element.
 
 ### dragAndDropTo(dropItem)
 Drags the element and drops it inside the item specified by dropItem.
@@ -48,42 +62,42 @@ Checks if the element is displayed on the page or not.
 `@returns {Promise}` - Resolves to true if the element is displayed and false otherwise.
 
 ### waitForPresent(baseElement)
-Waits for the element to become present on the page. **NOTE** waitForPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+Waits for the element to become present on the page. **NOTE** `waitForNotPresent` still expects the base element (if there is one) to be present.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotPresent(baseElement)
-Waits for the element to become no longer present on the page. **NOTE** waitForNotPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+Waits for the element to become no longer present on the page. **NOTE** `waitForNotPresent` still expects the base element (if there is one) to be present.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes not present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForDisplayed(baseElement)
-Waits for the element to become displayed on the page. **NOTE** waitForDisplayed calls waitForPresent first. While waitForDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element to become displayed on the page. **NOTE** `waitForDisplayed` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes displayed within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotDisplayed(baseElement)
-Waits for the element to become no longer displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead. **NOTE** waitForNotDisplayed calls waitForPresent first. While waitForNotDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element to become no longer displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead. **NOTE** `waitForNotDisplayed` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes not displayed within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextExists(baseElement)
-Waits for the element on the page to contain text. **NOTE** waitForTextExists calls waitForPresent first. While waitForTextExists uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element on the page to contain text. **NOTE** `waitForTextExists` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element contains some text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextEqual(text, baseElement)
-Waits for the element on the page to contain the specified text. **NOTE** waitForTextEqual calls waitForPresent first. While waitForTextEqual uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element on the page to contain the specified text. **NOTE** `waitForTextEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument text {String}` - The text to check for.
 
@@ -92,7 +106,7 @@ Waits for the element on the page to contain the specified text. **NOTE** waitFo
 `@returns {Promise}` Resolves sucessfully if the element contains the specified text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextNotEqual(text, baseElement)
-Waits for the element on the page to not contain the specified text. **NOTE** waitForTextNotEqual calls waitForPresent first. While waitForTextNotEqual uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element on the page to not contain the specified text. **NOTE** `waitForTextNotEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument text {String}` - The text to check for.
 
@@ -101,7 +115,7 @@ Waits for the element on the page to not contain the specified text. **NOTE** wa
 `@returns {Promise}` Resolves sucessfully if the element contains text other than the specified text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForAttributeEqual(attribute, text, baseElement)
-Waits for the specified attribute on the element on the page to contain the specified text value. **NOTE** waitForAttributeEqual calls waitForPresent first. While waitForAttributeEqual uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the specified attribute on the element on the page to contain the specified text value. **NOTE** `waitForAttributeEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument attribute {String}` - The attribute to look at.
 
@@ -112,7 +126,7 @@ Waits for the specified attribute on the element on the page to contain the spec
 `@returns {Promise}` Resolves sucessfully if the specified attribute on the element contains the specified text value within the wait timeout and unsuccessfully if it does not.
 
 ### waitForAttributeNotEqual(attribute, text, baseElement)
-Waits for the specified attribute on the element on the page to contain text other than the specified text value. **NOTE** waitForAttributeNotEqual calls waitForPresent first. While waitForAttributeNotEqual uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the specified attribute on the element on the page to contain text other than the specified text value. **NOTE** `waitForAttributeNotEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
 
 `@argument attribute {String}` - The attribute to look at.
 
@@ -121,3 +135,15 @@ Waits for the specified attribute on the element on the page to contain text oth
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the specified attribute on the element contains the text other than the specified text value within the wait timeout and unsuccessfully if it does not.
+
+### collect(baseOverride)
+Collects the data based on the `_data` field. If `_data` is not specified in the locator, this will collect the text of the element.
+Possible `_data` values:
+* `text` - Collect the text of the element.
+* `html` - Collect the html of the element.
+* `attribute:<attributeName>` - Collects the attribute of the name `<attributeName>` on the element.
+* `present` - Collects `true` if the element is present and `false` otherwise.
+
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` - Returns the promise from clicking the element.

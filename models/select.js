@@ -1,6 +1,7 @@
 'use strict';
 
 var ElementModel = require('./element'),
+    StaticItemModel = require('./staticItem'),
     _ = require('lodash'),
     debug = require('debug'),
     log = debug('nemo-page:log'),
@@ -9,40 +10,39 @@ var ElementModel = require('./element'),
 var SelectModel = function (config, parent, nemo, drivex) {
     log('SelectModel: Initializing Select Model');
 
+    config = _.defaults(_.clone(config), { '_data': 'attribute:value' });
+
     // Initialize the base model object
     var base = ElementModel(config, parent, nemo, drivex);
 
     // Extend the base model with this models functions
     _.extend(base, {
-        collect: function (baseOverride) {
-            var baseElement;
-
-            if (baseOverride) {
-                baseElement = baseOverride;
-            } else {
-                baseElement = base._getBase();
-            }
-
-            return drivex.present(base.locator(), baseElement).then(function (isPresent) {
-                if (isPresent) {
-                    return base.get(baseElement).getAttribute('value').then(function (value) {
-                        if (_.isString(value)) {
-                            value = value.trim();
-                        }
-
-                        return value;
-                    });
-                }
-            });
-        },
-
-        setValue: function (data, baseOverride) {
+        option: function (data, baseOverride) {
             var element = base.get(baseOverride),
+                optionLoc,
+                itemPromise,
+                item;
+
+            if (_.isNumber(data)) {
+                optionLoc = normalize(nemo, {
+                    locator: 'option:nth-child(' + data + ')',
+                    type: 'css'
+                });
+            } else {
                 optionLoc = normalize(nemo, {
                     locator: 'option[value="' + data + '"]',
                     type: 'css'
                 });
-            drivex.find(optionLoc, element).click();
+            }
+
+            itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.find(optionLoc, element));
+            item = StaticItemModel(itemPromise, nemo);
+
+            return ElementModel({ '_data': 'attribute:value'}, item, nemo, drivex);
+        },
+
+        setValue: function (data, baseOverride) {
+            return base.option(data, baseOverride).click();
         }
     });
 

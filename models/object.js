@@ -19,7 +19,7 @@ var ObjectModel = function (config, parent, nemo, drivex) {
             var promiseList = [],
                 data = {};
 
-            base._getBase(true);
+            base.getBase(true);
 
             _.each(fields, function (field, key) {
                 var promise = field.collect(baseOverride).then(function (value) {
@@ -69,7 +69,7 @@ var ObjectModel = function (config, parent, nemo, drivex) {
         }
 
         if (!value['_model']) {
-            modelObj = mappings.text;
+            modelObj = mappings.element;
         } else {
             modelObj = mappings[value['_model']];
 

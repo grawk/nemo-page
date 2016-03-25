@@ -3,7 +3,7 @@
 var debug = require('debug'),
     log = debug('nemo-page:log');
 
-var ArrayItemModel = function (element) {
+var ArrayItemModel = function (element, nemo) {
     log('ArrayItemModel: Initializing Array Item Model');
 
     return {
@@ -11,8 +11,15 @@ var ArrayItemModel = function (element) {
             // Do nothing
         },
 
-        _getBase: function (cache) {
+        getBase: function (cache) {
             return element;
+        },
+
+        isBasePresent: function () {
+            var deferred = nemo.wd.promise.defer();
+
+            deferred.fulfill(true);
+            return deferred;
         }
     };
 };

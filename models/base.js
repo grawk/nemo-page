@@ -20,7 +20,7 @@ var BaseModel = function(config, parent, nemo, drivex) {
             }
         },
 
-        _getBase: function (cache) {
+        getBase: function (cache) {
             var parentBase,
                 foundBase;
 
@@ -28,8 +28,8 @@ var BaseModel = function(config, parent, nemo, drivex) {
                 return base;
             }
 
-            if (parent && parent._getBase) {
-                parentBase = parent._getBase();
+            if (parent && parent.getBase) {
+                parentBase = parent.getBase();
             }
 
             if (baseLocator) {
@@ -41,6 +41,20 @@ var BaseModel = function(config, parent, nemo, drivex) {
                 return foundBase;
             } else {
                 return parentBase;
+            }
+        },
+
+        isBasePresent: function () {
+            var parentBase;
+
+            if (baseLocator) {
+                if (parent && parent.getBase) {
+                    parentBase = parent.getBase();
+                }
+
+                return drivex.present(baseLocator, parentBase);
+            } else {
+                return parent.isBasePresent();
             }
         }
     };

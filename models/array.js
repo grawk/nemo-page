@@ -26,7 +26,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             throw new Error('[nemo-page] Cannot create models that are abstract');
         }
     } else {
-        itemModel = mappings.text;
+        itemModel = mappings.element;
     }
 
     itemObj = itemModel(config, undefined, nemo, drivex);
@@ -39,7 +39,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             if (baseOverride) {
                 baseElement = baseOverride;
             } else {
-                baseElement = base._getBase(true);
+                baseElement = base.getBase(true);
             }
 
             return drivex.finds(itemsLocator, baseElement).then(function (items) {
@@ -73,14 +73,14 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             if (baseOverride) {
                 baseElement = baseOverride;
             } else {
-                baseElement = base._getBase();
+                baseElement = base.getBase();
             }
 
             itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.finds(itemsLocator, baseElement).then(function (items) {
                 return items[itemIndex];
             }));
 
-            arrayItem = StaticItemModel(itemPromise);
+            arrayItem = StaticItemModel(itemPromise, nemo);
 
             return itemModel(config, arrayItem, nemo, drivex);
         },

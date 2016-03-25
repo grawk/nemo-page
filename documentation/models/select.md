@@ -7,14 +7,18 @@ Extends - [Element Model](element.md)
 
 ## Methods
 
-### collect(baseOverride)
-Collects the input value of the element.
+### option(data)
+Gets the specified option for the select.
 
-`@argument baseOverride {WebElement}` - An optional override for the base element it uses for collection.
+`@argument data {String/Number}` - If `data` is a String, gets the option with the value of `data`. If `data` is a Number, gets the option at the index of `data`.
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
-`@returns {Promise}` - Resolves to a string containing the input value of the element. If the element is not present, resolves to undefined instead.
+`@returns {Promise}` - The promise from setting the value of the select.
 
 ### setValue(data)
 Sets the option for the select.
 
-`@argument data {String}` - The value of the option element to be set.
+`@argument data {String/Number}` - If `data` is a String, sets the option with the value of `data`. If `data` is a Number, sets the option at the index of `data`.
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` - The promise from setting the value of the select.

@@ -10,7 +10,7 @@ Page is a plugin for the nemo test framework which brings a more page-structured
 ```javascript
 	...
     "nemo": "^1.0.0",
-    "nemo-page": "^0.0.1",
+    "nemo-page": "^1.0.0",
 	...
 ```
 
@@ -84,29 +84,9 @@ This model serves to identify sets of elements on a page (eg, a list or navigati
 See: [Array Model](documentation/models/array.md)
 
 ### Element Model
-The Element model is the interface model used for anything that resolves to an element on the page. Most other models will extend this model.
+The Element model is the model used for anything that resolves to an element on the page. Most other models will extend this model.
 
 See: [Element Model](documentation/models/element.md)
-
-### Text Model
-The Text model is an extension of the Element model where data collection is based on the text of the element.
-
-See: [Text Model](documentation/models/text.md)
-
-### HTML Model
-The HTML model is an extension of the Element model where data collection is based on the inner html of the element.
-
-See: [HTML Model](documentation/models/html.md)
-
-### Present Model
-The Text model is an extension of the Element model where data collection is based on the presence of the element.
-
-See: [Present Model](documentation/models/present.md)
-
-### Attribute Model
-The Attribute model is an extension of the Element model where data collection is based on the value of the specified attribute of the element.
-
-See: [Attribute Model](documentation/models/attribute.md)
 
 ### Input Model
 The Input model is an extension of the Element model where data collection is based on the input value of the element.
