@@ -95,18 +95,29 @@ var ElementModel = function (config, parent, nemo, drivex) {
         },
 
         isPresent: function (baseOverride) {
-            var baseElement;
+            var deferred;
 
             if (locator) {
                 if (baseOverride) {
-                    baseElement = baseOverride;
+                    return drivex.present(locator, baseOverride);
                 } else {
-                    baseElement = base.getBase();
+                    return base.isBasePresent().then(function (isPresent) {
+                        var baseElement;
+                        if (isPresent) {
+                            baseElement = base.getBase();
+                            return drivex.present(locator, baseElement).then(function (isPresent) {
+                                return isPresent;
+                            });
+                        } else {
+                            return false;
+                        }
+                    });
                 }
-                return drivex.present(locator, baseElement);
             } else {
                 if (baseOverride) {
-                    return drivex.present(baseOverride);
+                    deferred = nemo.wd.promise.defer();
+                    deferred.fulfill(true);
+                    return deferred;
                 } else {
                     return base.isBasePresent();
                 }
@@ -123,7 +134,11 @@ var ElementModel = function (config, parent, nemo, drivex) {
 
         waitForPresent: function (baseElement) {
             return nemo.driver.wait(function () {
-                return base.isPresent(baseElement);
+                return base.isPresent(baseElement).then(function (isPresent) {
+                    return isPresent;
+                }).thenCatch(function (err) {
+                    return false;
+                });
             }, WAIT_TIMEOUT);
         },
 
@@ -131,6 +146,8 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return nemo.driver.wait(function () {
                 return base.isPresent(baseElement).then(function (isPresent) {
                     return !isPresent;
+                }).thenCatch(function (err) {
+                    return false;
                 });
             }, WAIT_TIMEOUT);
         },
@@ -205,12 +222,12 @@ var ElementModel = function (config, parent, nemo, drivex) {
 
         collect: function (baseOverride) {
             var callArr = _.clone(dataCollectCallArr);
-            callArr.unshift(baseOverride);
+            callArr.push(baseOverride);
 
             if (base[dataCollect + 'Collect']) {
-                return base[dataCollect + 'Collect'].apply(null, dataCollectCallArr);
+                return base[dataCollect + 'Collect'].apply(null, callArr);
             } else {
-                return base.textCollect.apply(null, dataCollectCallArr);
+                return base.textCollect.apply(null, callArr);
             }
         },
 
@@ -218,9 +235,9 @@ var ElementModel = function (config, parent, nemo, drivex) {
          * Collector functions only below
          */
         textCollect: function (baseOverride) {
-            return base.isPresent(baseElement).then(function (isPresent) {
+            return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseElement).getText().then(function (value) {
+                    return base.get(baseOverride).getText().then(function (value) {
                         if (_.isString(value)) {
                             value = value.trim();
                         }
@@ -231,10 +248,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
             });
         },
 
-        attributeCollect: function (baseOverride, attribute) {
-            return base.isPresent(baseElement).then(function (isPresent) {
+        attributeCollect: function (attribute, baseOverride) {
+            return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseElement).getAttribute(attribute).then(function (value) {
+                    return base.get(baseOverride).getAttribute(attribute).then(function (value) {
                         if (_.isString(value)) {
                             value = value.trim();
                         }
@@ -246,9 +263,9 @@ var ElementModel = function (config, parent, nemo, drivex) {
         },
 
         htmlCollect: function (baseOverride) {
-            return base.isPresent(baseElement).then(function (isPresent) {
+            return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseElement).getInnerHtml().then(function (value) {
+                    return base.get(baseOverride).getInnerHtml().then(function (value) {
                         if (_.isString(value)) {
                             value = value.trim();
                         }

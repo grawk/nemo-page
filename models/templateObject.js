@@ -42,14 +42,6 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
     // Extend the base model with this models functions
     _.extend(base, {
         collectItem: function (data, baseOverride) {
-            var baseElement;
-
-            if (baseOverride) {
-                baseElement = baseOverride;
-            } else {
-                baseElement = base._getBase(true);
-            }
-
             return base.item(data, baseOverride).collect();
         },
 
@@ -62,7 +54,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
             if (baseOverride) {
                 baseElement = baseOverride;
             } else {
-                baseElement = base._getBase();
+                baseElement = base.getBase();
             }
 
             itemPromise = new nemo.wd.WebElementPromise(nemo.driver, drivex.find(itemLocator, baseElement));

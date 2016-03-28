@@ -39,7 +39,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             if (baseOverride) {
                 baseElement = baseOverride;
             } else {
-                baseElement = base.getBase(true);
+                baseElement = base.getBase();
             }
 
             return drivex.finds(itemsLocator, baseElement).then(function (items) {
@@ -57,7 +57,6 @@ var ArrayModel = function (config, parent, nemo, drivex) {
                 });
 
                 return nemo.wd.promise.all(promiseList).then(function () {
-                    base._clearBase(true);
                     if (!_.isEmpty(data)) {
                         return data;
                     }

@@ -45,16 +45,27 @@ var BaseModel = function(config, parent, nemo, drivex) {
         },
 
         isBasePresent: function () {
-            var parentBase;
+            var deferred;
 
             if (baseLocator) {
                 if (parent && parent.getBase) {
-                    parentBase = parent.getBase();
+                    return parent.isBasePresent().then(function (isPresent) {
+                        if (isPresent) {
+                            return drivex.present(baseLocator, parent.getBase());
+                        } else {
+                            return false;
+                        }
+                    });
+                } else {
+                    return drivex.present(baseLocator);
                 }
-
-                return drivex.present(baseLocator, parentBase);
-            } else {
+            } else if (parent && parent.isBasePresent) {
                 return parent.isBasePresent();
+            } else {
+                deferred = nemo.wd.promise.defer();
+
+                deferred.fulfill(true);
+                return deferred;
             }
         }
     };

@@ -62,42 +62,42 @@ Checks if the element is displayed on the page or not.
 `@returns {Promise}` - Resolves to true if the element is displayed and false otherwise.
 
 ### waitForPresent(baseElement)
-Waits for the element to become present on the page. **NOTE** `waitForNotPresent` still expects the base element (if there is one) to be present.
+Waits for the element to become present on the page.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotPresent(baseElement)
-Waits for the element to become no longer present on the page. **NOTE** `waitForNotPresent` still expects the base element (if there is one) to be present.
+Waits for the element to become no longer present on the page.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes not present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForDisplayed(baseElement)
-Waits for the element to become displayed on the page. **NOTE** `waitForDisplayed` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the element to become displayed on the page.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes displayed within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotDisplayed(baseElement)
-Waits for the element to become no longer displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead. **NOTE** `waitForNotDisplayed` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the element to become no longer displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element becomes not displayed within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextExists(baseElement)
-Waits for the element on the page to contain text. **NOTE** `waitForTextExists` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the element on the page to contain text.
 
 `@argument baseElement {WebElement}` - An optional override for the base element it uses to retrieve the element.
 
 `@returns {Promise}` Resolves sucessfully if the element contains some text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextEqual(text, baseElement)
-Waits for the element on the page to contain the specified text. **NOTE** `waitForTextEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the element on the page to contain the specified text.
 
 `@argument text {String}` - The text to check for.
 
@@ -106,7 +106,7 @@ Waits for the element on the page to contain the specified text. **NOTE** `waitF
 `@returns {Promise}` Resolves sucessfully if the element contains the specified text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForTextNotEqual(text, baseElement)
-Waits for the element on the page to not contain the specified text. **NOTE** `waitForTextNotEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the element on the page to not contain the specified text.
 
 `@argument text {String}` - The text to check for.
 
@@ -115,7 +115,7 @@ Waits for the element on the page to not contain the specified text. **NOTE** `w
 `@returns {Promise}` Resolves sucessfully if the element contains text other than the specified text within the wait timeout and unsuccessfully if it does not.
 
 ### waitForAttributeEqual(attribute, text, baseElement)
-Waits for the specified attribute on the element on the page to contain the specified text value. **NOTE** `waitForAttributeEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the specified attribute on the element on the page to contain the specified text value.
 
 `@argument attribute {String}` - The attribute to look at.
 
@@ -126,7 +126,7 @@ Waits for the specified attribute on the element on the page to contain the spec
 `@returns {Promise}` Resolves sucessfully if the specified attribute on the element contains the specified text value within the wait timeout and unsuccessfully if it does not.
 
 ### waitForAttributeNotEqual(attribute, text, baseElement)
-Waits for the specified attribute on the element on the page to contain text other than the specified text value. **NOTE** `waitForAttributeNotEqual` calls `waitForPresent` first. Make sure the requirements for `waitForPresent` are met.
+Waits for the specified attribute on the element on the page to contain text other than the specified text value.
 
 `@argument attribute {String}` - The attribute to look at.
 
