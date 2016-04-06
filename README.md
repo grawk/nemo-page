@@ -117,7 +117,7 @@ The Select model is an extension of the Element model where data collection is b
 
 See: [Select Model](documentation/models/select.md)
 
-### Select Model
+### Radio Model
 The Radio model is an extension of the Element model where data collection is based on the input value of the matching checked radio option as well as handling set operations specifically for radio input elements.
 
 See: [Radio Model](documentation/models/radio.md)
