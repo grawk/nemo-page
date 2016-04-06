@@ -8,6 +8,7 @@ Extends - [Element Model](element.md)
 ## Methods
 
 ### setValue(data)
+**Auto-Retry Enabled**
 Sets the input value for the element.
 
 `@argument data {String}` - The data to be set.

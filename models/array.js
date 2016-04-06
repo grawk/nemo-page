@@ -7,8 +7,6 @@ var BaseModel = require('./base'),
     log = debug('nemo-page:log'),
     normalize = require('../lib/normalize');
 
-var WAIT_TIMEOUT = 8000;
-
 var ArrayModel = function (config, parent, nemo, drivex) {
     log('ArrayModel: Initializing Array Model');
 
@@ -84,35 +82,59 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             return itemModel(config, arrayItem, nemo, drivex);
         },
 
+        isPresent: function (baseOverride) {
+            if (baseOverride) {
+                return drivex.present(itemsLocator, baseOverride);
+            } else {
+                return base.isBasePresent().then(function (isPresent) {
+                    var baseElement;
+                    if (isPresent) {
+                        baseElement = base.getBase();
+                        return drivex.present(itemsLocator, baseElement);
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        },
+
         waitForPresent: function (baseElement) {
             return nemo.driver.wait(function () {
-                return drivex.present(itemsLocator, baseElement);
-            }, WAIT_TIMEOUT);
+                return base.isPresent(baseElement).thenCatch(function () {
+                    return false;
+                });
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForNotPresent: function (baseElement) {
             return nemo.driver.wait(function () {
-                return drivex.present(itemsLocator, baseElement).then(function (isPresent) {
+                return base.isPresent(baseElement).then(function (isPresent) {
                     return !isPresent;
+                }).thenCatch(function () {
+                    return false;
                 });
-            }, WAIT_TIMEOUT);
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForDisplayed: function (baseElement) {
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemsLocator, baseElement).isDisplayed();
-                }, WAIT_TIMEOUT);
+                    return base.item(0).getBase().isDisplayed().thenCatch(function () {
+                        return false;
+                    });
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
         waitForNotDisplayed: function (baseElement) {
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemsLocator, baseElement).isDisplayed().then(function (isDisplayed) {
+                    return base.item(0).getBase().isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         }
     });

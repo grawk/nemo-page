@@ -1,6 +1,7 @@
 'use strict';
 
 var ElementModel = require('./element'),
+    ArrayModel = require('./array'),
     StaticItemModel = require('./staticItem'),
     _ = require('lodash'),
     debug = require('debug'),
@@ -14,6 +15,15 @@ var SelectModel = function (config, parent, nemo, drivex) {
 
     // Initialize the base model object
     var base = ElementModel(config, parent, nemo, drivex);
+
+    base.options = ArrayModel({
+        _base: config.locator,
+        _data: 'attribute:value',
+        _itemsLocator: {
+            locator: 'option',
+            type: 'css'
+        }
+    }, base, nemo, drivex);
 
     // Extend the base model with this models functions
     _.extend(base, {

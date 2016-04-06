@@ -7,6 +7,7 @@ var _ = require('lodash'),
     glob = require("glob"),
     path = require('path'),
     typeMappings = require('./lib/typeMappings'),
+    pageCommon = require('./lib/pageCommon'),
     Drivex = require('selenium-drivex');
 
 module.exports.typeMappings = typeMappings;
@@ -17,7 +18,7 @@ module.exports.setup = function (locatorDirectory, modelDirectory, nemo, _callba
         drivex = Drivex(nemo.driver, nemo.wd);
 
     // Add page namespace to nemo
-    nemo.page = {};
+    nemo.page = pageCommon(nemo, drivex);
 
     if (modelDirectory !== null) {
         typeMappings.resetMappings();

@@ -16,9 +16,11 @@ var InputModel = function (config, parent, nemo, drivex) {
     // Extend the base model with this models functions
     _.extend(base, {
         setValue: function (data, baseOverride) {
-            var element = base.get(baseOverride);
-            element.clear();
-            element.sendKeys(data);
+            return nemo.page.doOperationWithRetry(function () {
+                var element = base.get(baseOverride);
+                element.clear();
+                return element.sendKeys(data);
+            }, nemo.page.NUM_RETRIES);
         }
     });
 

@@ -26,7 +26,15 @@ Gets the element on the page.
 
 `@returns {WebElement}` - Returns the WebElement from the objects locator.
 
+### withClass(className)
+Creates a new Element model that is a copy of the current model. This new model matches to the original models locator with the additional given class. **NOTE** This only works with CSS type locators.
+
+`@argument className {String}` - The name of the class you want to look for.
+
+`@returns {Element Model}` - An element model representing the new element lookup.
+
 ### click(baseOverride)
+**Auto-Retry Enabled**
 Clicks the element on the page.
 
 `@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
@@ -34,6 +42,7 @@ Clicks the element on the page.
 `@returns {Promise}` - Returns the promise from clicking the element.
 
 ### hover(baseOverride)
+**Auto-Retry Enabled**
 Hovers over the element on the page.
 
 `@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
@@ -41,6 +50,7 @@ Hovers over the element on the page.
 `@returns {Promise}` - Returns the promise from hovering over the element.
 
 ### dragAndDropTo(dropItem)
+**Auto-Retry Enabled**
 Drags the element and drops it inside the item specified by dropItem.
 
 `@argument dropItem {Element Model}` - The nemo-page item to use for where to drop. This item *should* extend from the Element Model, but will work with custom models as long as they contain the `get` method.
@@ -55,6 +65,7 @@ Checks if the element is present on the page or not.
 `@returns {Promise}` - Resolves to true if the element is present and false otherwise.
 
 ### isDisplayed(baseOverride)
+**Auto-Retry Enabled**
 Checks if the element is displayed on the page or not.
 
 `@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
@@ -137,6 +148,7 @@ Waits for the specified attribute on the element on the page to contain text oth
 `@returns {Promise}` Resolves sucessfully if the specified attribute on the element contains the text other than the specified text value within the wait timeout and unsuccessfully if it does not.
 
 ### collect(baseOverride)
+**Auto-Retry Enabled**
 Collects the data based on the `_data` field. If `_data` is not specified in the locator, this will collect the text of the element.
 Possible `_data` values:
 * `text` - Collect the text of the element.

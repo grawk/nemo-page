@@ -6,8 +6,6 @@ var BaseModel = require('./base'),
     log = debug('nemo-page:log'),
     normalize = require('../lib/normalize');
 
-var WAIT_TIMEOUT = 8000;
-
 var ElementModel = function (config, parent, nemo, drivex) {
     log('ElementModel: Initializing Element Model');
 
@@ -33,6 +31,15 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return locator;
         },
 
+        withClass: function (className) {
+            var withClassConfig = _.clone(config);
+
+            withClassConfig.locator = config.locator + '.' + className;
+            withClassConfig.type = 'css';
+
+            return ElementModel(withClassConfig, parent, nemo, drivex);
+        },
+
         get: function (baseOverride) {
             var baseElement;
 
@@ -50,86 +57,104 @@ var ElementModel = function (config, parent, nemo, drivex) {
         },
 
         click: function (baseOverride) {
-            return base.get(baseOverride).click();
+            return nemo.page.doOperationWithRetry(function () {
+                return base.get(baseOverride).click();
+            }, nemo.page.NUM_RETRIES);
         },
 
         hover: function (baseOverride) {
-            var element = base.get(baseOverride);
-            return nemo.driver.actions()
-                    .mouseMove(element)
-                    .perform();
+            return nemo.page.doOperationWithRetry(function () {
+                var element = base.get(baseOverride);
+                return nemo.driver.actions()
+                        .mouseMove(element)
+                        .perform();
+            }, nemo.page.NUM_RETRIES);
         },
 
         dragAndDropTo: function (dropItem) {
-            var dragElement = base.get(),
-                dropElement = dropItem.get();
+            return nemo.page.doOperationWithRetry(function () {
+                var dragElement = base.get(),
+                    dropElement = dropItem.get();
 
-            dragElement.click();
-            dropElement.click();
+                dragElement.click();
+                dropElement.click();
 
-            return dropElement.getLocation().then(function (loc) {
-                return dropElement.getSize().then(function (size) {
-                    var dragOffset = {
-                            x: 15,
-                            y: 15
-                        },
-                        dropOffset = {
-                            x: 15,
-                            y: size.height / 2
-                        };
+                return dropElement.getLocation().then(function (loc) {
+                    return dropElement.getSize().then(function (size) {
+                        var dragOffset = {
+                                x: 15,
+                                y: 15
+                            },
+                            dropOffset = {
+                                x: 15,
+                                y: size.height / 2
+                            };
 
-                    nemo.driver.actions()
-                        .mouseMove(dragElement)
-                        .mouseDown()
-                        .mouseMove(dragElement, dragOffset)
-                        .mouseMove(dropElement, dropOffset)
-                        .perform();
+                        nemo.driver.actions()
+                            .mouseMove(dragElement)
+                            .mouseDown()
+                            .mouseMove(dragElement, dragOffset)
+                            .mouseMove(dropElement, dropOffset)
+                            .perform();
 
-                    nemo.driver.sleep(500);
+                        nemo.driver.sleep(500);
 
-                    return nemo.driver.actions()
-                        .mouseUp()
-                        .perform();
+                        return nemo.driver.actions()
+                            .mouseUp()
+                            .perform();
+                    });
                 });
-            });
+            }, nemo.page.NUM_RETRIES);
         },
 
         isPresent: function (baseOverride) {
-            var deferred;
+            return nemo.page.doOperationWithRetry(function () {
+                var deferred;
 
-            if (locator) {
-                if (baseOverride) {
-                    return drivex.present(locator, baseOverride);
+                if (locator) {
+                    if (baseOverride) {
+                        return drivex.present(locator, baseOverride);
+                    } else {
+                        return base.isBasePresent().then(function (isPresent) {
+                            var baseElement;
+                            if (isPresent) {
+                                baseElement = base.getBase();
+                                return drivex.present(locator, baseElement).then(function (isPresent) {
+                                    return isPresent;
+                                });
+                            } else {
+                                return false;
+                            }
+                        });
+                    }
                 } else {
-                    return base.isBasePresent().then(function (isPresent) {
-                        var baseElement;
-                        if (isPresent) {
-                            baseElement = base.getBase();
-                            return drivex.present(locator, baseElement).then(function (isPresent) {
-                                return isPresent;
-                            });
-                        } else {
-                            return false;
-                        }
-                    });
+                    if (baseOverride) {
+                        deferred = nemo.wd.promise.defer();
+                        deferred.fulfill(true);
+                        return deferred;
+                    } else {
+                        return base.isBasePresent();
+                    }
                 }
-            } else {
-                if (baseOverride) {
-                    deferred = nemo.wd.promise.defer();
-                    deferred.fulfill(true);
-                    return deferred;
-                } else {
-                    return base.isBasePresent();
-                }
-            }
+            }, nemo.page.NUM_RETRIES);
         },
 
         isDisplayed: function (baseOverride) {
-            return base.get(baseOverride).isDisplayed();
+            return nemo.page.doOperationWithRetry(function () {
+                return base.isPresent(baseOverride).then(function (isPresent) {
+                    if (isPresent) {
+                        return base.get(baseOverride).isDisplayed();
+                    } else {
+                        return false;
+                    }
+                });
+            }, nemo.page.NUM_RETRIES);
         },
 
         isEnabled: function (baseOverride) {
-            return base.get(baseOverride).isEnabled();
+            return nemo.page.doOperationWithRetry(function () {
+                return base.get(baseOverride).isEnabled();
+            }, nemo.page.NUM_RETRIES);
         },
 
         waitForPresent: function (baseElement) {
@@ -139,25 +164,26 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 }).thenCatch(function (err) {
                     return false;
                 });
-            }, WAIT_TIMEOUT);
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForNotPresent: function (baseElement) {
             return nemo.driver.wait(function () {
                 return base.isPresent(baseElement).then(function (isPresent) {
                     return !isPresent;
-                }).thenCatch(function (err) {
+                }).thenCatch(function () {
                     return false;
                 });
-            }, WAIT_TIMEOUT);
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForDisplayed: function (baseElement) {
-            return base.waitForPresent(baseElement).then(function () {
-                return nemo.driver.wait(function () {
-                    return base.get(baseElement).isDisplayed();
-                }, WAIT_TIMEOUT);
-            });
+            base.waitForPresent(baseElement);
+            return nemo.driver.wait(function () {
+                return base.get(baseElement).isDisplayed().thenCatch(function (err) {
+                    return false;
+                });
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForNotDisplayed: function (baseElement) {
@@ -165,8 +191,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -175,8 +203,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return !!value;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -185,8 +215,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return value == text;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -195,8 +227,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return value != text;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -205,8 +239,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getAttribute(attribute).then(function (value) {
                         return value == text;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -215,8 +251,10 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getAttribute(attribute).then(function (value) {
                         return value != text;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
@@ -237,13 +275,15 @@ var ElementModel = function (config, parent, nemo, drivex) {
         textCollect: function (baseOverride) {
             return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseOverride).getText().then(function (value) {
-                        if (_.isString(value)) {
-                            value = value.trim();
-                        }
+                    return nemo.page.doOperationWithRetry(function () {
+                        return base.get(baseOverride).getText().then(function (value) {
+                            if (_.isString(value)) {
+                                value = value.trim();
+                            }
 
-                        return value;
-                    });
+                            return value;
+                        });
+                    }, nemo.page.NUM_RETRIES);
                 }
             });
         },
@@ -251,13 +291,15 @@ var ElementModel = function (config, parent, nemo, drivex) {
         attributeCollect: function (attribute, baseOverride) {
             return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseOverride).getAttribute(attribute).then(function (value) {
-                        if (_.isString(value)) {
-                            value = value.trim();
-                        }
+                    return nemo.page.doOperationWithRetry(function () {
+                        return base.get(baseOverride).getAttribute(attribute).then(function (value) {
+                            if (_.isString(value)) {
+                                value = value.trim();
+                            }
 
-                        return value;
-                    });
+                            return value;
+                        });
+                    }, nemo.page.NUM_RETRIES);
                 }
             });
         },
@@ -265,13 +307,15 @@ var ElementModel = function (config, parent, nemo, drivex) {
         htmlCollect: function (baseOverride) {
             return base.isPresent(baseOverride).then(function (isPresent) {
                 if (isPresent) {
-                    return base.get(baseOverride).getInnerHtml().then(function (value) {
-                        if (_.isString(value)) {
-                            value = value.trim();
-                        }
+                    return nemo.page.doOperationWithRetry(function () {
+                        return base.get(baseOverride).getInnerHtml().then(function (value) {
+                            if (_.isString(value)) {
+                                value = value.trim();
+                            }
 
-                        return value;
-                    });
+                            return value;
+                        });
+                    }, nemo.page.NUM_RETRIES);
                 }
             });
         },

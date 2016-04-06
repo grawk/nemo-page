@@ -4,44 +4,29 @@ var _ = require('lodash'),
     normalize = require('../lib/normalize');
 
 var BaseModel = function(config, parent, nemo, drivex) {
-    var baseLocator,
-        base;
+    var baseLocator;
 
     if (config['_base']) {
         baseLocator = normalize(nemo, config['_base']);
     }
 
-    return {
-        _clearBase: function (isRecursive) {
-            base = undefined;
-
-            if (isRecursive && parent && parent.clearBase) {
-                parent.clearBase(isRecursive);
-            }
-        },
-
-        getBase: function (cache) {
-            var parentBase,
-                foundBase;
-
-            if (base) {
-                return base;
-            }
+    var base = {
+        getBase: function () {
+            var parentBase;
 
             if (parent && parent.getBase) {
                 parentBase = parent.getBase();
             }
 
             if (baseLocator) {
-                foundBase = drivex.find(baseLocator, parentBase);
-                if (cache) {
-                    base = foundBase;
-                }
-
-                return foundBase;
+                return drivex.find(baseLocator, parentBase);
             } else {
                 return parentBase;
             }
+        },
+
+        get: function () {
+            return base.getBase();
         },
 
         isBasePresent: function () {
@@ -69,6 +54,8 @@ var BaseModel = function(config, parent, nemo, drivex) {
             }
         }
     };
+
+    return base;
 };
 
 BaseModel.isAbstract = true;

@@ -60,6 +60,25 @@ The following extra fields can be added to a locator definition to change how Pa
 * `_model` - {String} This field can be any of the Page defined model types and will make that locator be used with that model definition. This field will default to "text" if not specified.
 * `_base` - {Locator} The root element from which all nested elements will be found. Typically used with "object" models, this field says "all locators nested within are located **inside** of this element.
 
+## Page Common
+There are a few things that can be accessed direction from `nemo.page` which help facilitate some of the `nemo-page` operations.
+
+### Fields
+
+* **WAIT_TIMEOUT** - `{Number}` How long wait operations will wait before failing (in ms). Default 8000
+* **NUM_RETRIES** - `{Number}` How many times to retry an operation that has retry enabled. Operations with retry enabled are marked with `Auto-Retry Enabled` in the documentation.
+
+### Methods
+
+#### doOperationWithRetry(operation, numRetries)
+Given a function which resolves to a promise, will catch any errors that the promise throws and retry again for the specified number of retries.
+
+`@argument operation {Function}` - A function which resolves to a promise.
+
+`@argument numRetries {Number}` - How many times to retry the operation.
+
+`@return {Promise}` - Returns a promise which will resolve to the successful value should the operation succeed within the number of attempts or the last error thrown should it fail.
+
 ## Model Types
 The major functionality of Page comes from using different "models" in the locators (see `_model` above). Each model has its own set of functions as well as some common functions across all models (or types of model).
 
@@ -97,6 +116,11 @@ See: [Input Model](documentation/models/input.md)
 The Select model is an extension of the Element model where data collection is based on the input value of a select element as well as handling set operations specifically for select elements.
 
 See: [Select Model](documentation/models/select.md)
+
+### Select Model
+The Radio model is an extension of the Element model where data collection is based on the input value of the matching checked radio option as well as handling set operations specifically for radio input elements.
+
+See: [Radio Model](documentation/models/radio.md)
 
 ## Creating Custom Models
 

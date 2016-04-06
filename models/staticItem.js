@@ -7,11 +7,11 @@ var ArrayItemModel = function (element, nemo) {
     log('ArrayItemModel: Initializing Array Item Model');
 
     return {
-        _clearBase: function (isRecursive) {
-            // Do nothing
+        getBase: function (cache) {
+            return element;
         },
 
-        getBase: function (cache) {
+        get: function () {
             return element;
         },
 

@@ -31,8 +31,17 @@ Retrieves the element which matches based on the data passed in.
 
 `@returns {Model}` - Resolves to a page Model object based on the `_itemModel` field representing the item that matches the data passed in.
 
+### isPresent(data, baseOverride)
+Checks if the element of the template object is present on the page or not.
+
+`@argument data {Object}` - The data to be used by the locator template.
+
+`@argument baseOverride {WebElement}` - An optional override for the base element it uses to retrieve the element.
+
+`@returns {Promise}` - Resolves to true if the element of the template object is present and false otherwise.
+
 ### waitForPresent(data, baseElement)
-Waits for an element which matches based on the data passed in to become present on the page. **NOTE** waitForPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+Waits for an element which matches based on the data passed in to become present on the page.
 
 `@argument data {Object}` - The data to be used by the locator template.
 
@@ -41,7 +50,7 @@ Waits for an element which matches based on the data passed in to become present
 `@returns {Promise}` Resolves sucessfully if the element becomes present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotPresent(data, baseElement)
-Waits for the element which matches based on the data passed in to no longer be present on the page. **NOTE** waitForNotPresent does *not* use the `_base` when checking for presence. This will be fixed later, but it is done this way now to avoid unexpected errors. If you want it to use the `_base`, pass in the result of `_getBase()` to the call.
+Waits for the element which matches based on the data passed in to no longer be present on the page.
 
 `@argument data {Object}` - The data to be used by the locator template.
 
@@ -50,7 +59,7 @@ Waits for the element which matches based on the data passed in to no longer be 
 `@returns {Promise}` Resolves sucessfully if the element becomes not present within the wait timeout and unsuccessfully if it does not.
 
 ### waitForDisplayed(baseElement)
-Waits for an element which matches based on the data passed in to become displayed on the page. **NOTE** waitForDisplayed calls waitForPresent first. While waitForDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for an element which matches based on the data passed in to become displayed on the page.
 
 `@argument data {Object}` - The data to be used by the locator template.
 
@@ -59,7 +68,7 @@ Waits for an element which matches based on the data passed in to become display
 `@returns {Promise}` Resolves sucessfully if the element becomes displayed within the wait timeout and unsuccessfully if it does not.
 
 ### waitForNotDisplayed(baseElement)
-Waits for the element which matches based on the data passed in to no be displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead. **NOTE** waitForNotDisplayed calls waitForPresent first. While waitForNotDisplayed uses the `_base` properly, it is possible to encounter issues if the element exists on the page, but not in the `_base` chain. This will be fixed when waitForPresent becomes fixed.
+Waits for the element which matches based on the data passed in to no be displayed on the page. It still, however, expects the element to be present. If you expect the element to no longer be present, use `waitForNotPresent` instead.becomes fixed.
 
 `@argument data {Object}` - The data to be used by the locator template.
 

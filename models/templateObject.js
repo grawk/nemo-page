@@ -7,8 +7,6 @@ var BaseModel = require('./base'),
     log = debug('nemo-page:log'),
     normalize = require('../lib/normalize');
 
-var WAIT_TIMEOUT = 8000;
-
 var TemplateObjectModel = function (config, parent, nemo, drivex) {
     log('TemplateObjectModel: Initializing Array Model');
 
@@ -64,43 +62,63 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
             return itemModel(config, staticItem, nemo, drivex);
         },
 
-        waitForPresent: function (data, baseElement) {
+        isPresent: function (data, baseOverride) {
             var itemLocator = getItemLocator(data);
 
+            if (baseOverride) {
+                return drivex.present(itemLocator, baseOverride);
+            } else {
+                return base.isBasePresent().then(function (isPresent) {
+                    var baseElement;
+                    if (isPresent) {
+                        baseElement = base.getBase();
+                        return drivex.present(itemLocator, baseElement).then(function (isPresent) {
+                            return isPresent;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        },
+
+        waitForPresent: function (data, baseElement) {
             return nemo.driver.wait(function () {
-                return drivex.present(itemLocator, baseElement);
-            }, WAIT_TIMEOUT);
+                return base.isPresent(data, baseElement).thenCatch(function () {
+                    return false;
+                });
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForNotPresent: function (data, baseElement) {
-            var itemLocator = getItemLocator(data);
-
             return nemo.driver.wait(function () {
-                return drivex.present(itemLocator, baseElement).then(function (isPresent) {
+                return base.isPresent(data, baseElement).then(function (isPresent) {
                     return !isPresent;
+                }).thenCatch(function () {
+                    return false;
                 });
-            }, WAIT_TIMEOUT);
+            }, nemo.page.WAIT_TIMEOUT);
         },
 
         waitForDisplayed: function (data, baseElement) {
-            var itemLocator = getItemLocator(data);
-
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemLocator, baseElement).isDisplayed();
-                }, WAIT_TIMEOUT);
+                    return base.item(data, baseElement).isDisplayed().thenCatch(function () {
+                        return false;
+                    });
+                }, nemo.page.WAIT_TIMEOUT);
             });
         },
 
         waitForNotDisplayed: function (data, baseElement) {
-            var itemLocator = getItemLocator(data);
-
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return drivex.find(itemLocator, baseElement).isDisplayed().then(function (isDisplayed) {
+                    return base.item(data, baseElement).isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
+                    }).thenCatch(function () {
+                        return false;
                     });
-                }, WAIT_TIMEOUT);
+                }, nemo.page.WAIT_TIMEOUT);
             });
         }
     });

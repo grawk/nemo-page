@@ -17,12 +17,17 @@ var ObjectModel = function (config, parent, nemo, drivex) {
     _.extend(base, {
         collect: function (baseOverride) {
             var promiseList = [],
-                data = {};
+                data = {},
+                baseElement;
 
-            base.getBase(true);
+            if (baseOverride) {
+                baseElement = baseOverride;
+            } else {
+                baseElement = base.getBase();
+            }
 
             _.each(fields, function (field, key) {
-                var promise = field.collect(baseOverride).then(function (value) {
+                var promise = field.collect(baseElement).then(function (value) {
                     if (_.isString(value)) {
                         value = value.trim();
                     }
@@ -35,7 +40,6 @@ var ObjectModel = function (config, parent, nemo, drivex) {
             });
 
             return nemo.wd.promise.all(promiseList).then(function () {
-                base._clearBase(true);
                 if (!_.isEmpty(data)) {
                     return data;
                 } else {
