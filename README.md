@@ -124,4 +124,4 @@ See: [Radio Model](documentation/models/radio.md)
 
 ## Creating Custom Models
 
-Custom models can be used by specifying a models folder as the second argument. It will assume that each js file is a unique model where the `_model` key is the name of the file. Models do not directly enforce any kind of structure, but it is a good idea to at least extend the functionality of Base (for non-element models) or Element (for element-level models). You can access any of the existing models on `require('nemo-page').typeMappings`.
+Custom models can be used by specifying a models folder as the second argument. It will assume that each js file is a unique model where the `_model` key is the name of the file. Models do not directly enforce any kind of structure, but it is a good idea to at least extend the functionality of Base (for non-element models) or Element (for element-level models). You can access any of the existing models on `require('nemo-page').typeMappings.getTypeMappings()`.
