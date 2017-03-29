@@ -18,8 +18,10 @@ var InputModel = function (config, parent, nemo, drivex) {
         setValue: function (data, baseOverride) {
             return nemo.page.doOperationWithRetry(function () {
                 var element = base.get(baseOverride);
-                element.clear();
-                return element.sendKeys(data);
+                return element.clear().then(function () {
+                    return element.sendKeys(data);
+                })
+
             }, nemo.page.NUM_RETRIES);
         }
     });
