@@ -84,7 +84,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
 
         waitForPresent: function (data, baseElement) {
             return nemo.driver.wait(function () {
-                return base.isPresent(data, baseElement).thenCatch(function () {
+                return base.isPresent(data, baseElement).catch(function () {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -94,7 +94,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
             return nemo.driver.wait(function () {
                 return base.isPresent(data, baseElement).then(function (isPresent) {
                     return !isPresent;
-                }).thenCatch(function () {
+                }).catch(function () {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -103,7 +103,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
         waitForDisplayed: function (data, baseElement) {
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return base.item(data, baseElement).isDisplayed().thenCatch(function () {
+                    return base.item(data, baseElement).isDisplayed().catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -115,7 +115,7 @@ var TemplateObjectModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.item(data, baseElement).isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);

@@ -100,7 +100,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
 
         waitForPresent: function (baseElement) {
             return nemo.driver.wait(function () {
-                return base.isPresent(baseElement).thenCatch(function () {
+                return base.isPresent(baseElement).catch(function () {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -110,7 +110,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
             return nemo.driver.wait(function () {
                 return base.isPresent(baseElement).then(function (isPresent) {
                     return !isPresent;
-                }).thenCatch(function () {
+                }).catch(function () {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -119,7 +119,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
         waitForDisplayed: function (baseElement) {
             return base.waitForPresent(baseElement).then(function () {
                 return nemo.driver.wait(function () {
-                    return base.item(0).getBase().isDisplayed().thenCatch(function () {
+                    return base.item(0).getBase().isDisplayed().catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -131,7 +131,7 @@ var ArrayModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.item(0).getBase().isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);

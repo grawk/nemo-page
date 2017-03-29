@@ -19,7 +19,7 @@ var ArrayItemModel = function (element, nemo) {
             var deferred = nemo.wd.promise.defer();
 
             deferred.fulfill(true);
-            return deferred;
+            return deferred.promise;
         }
     };
 };

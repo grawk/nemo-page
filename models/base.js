@@ -50,7 +50,7 @@ var BaseModel = function(config, parent, nemo, drivex) {
                 deferred = nemo.wd.promise.defer();
 
                 deferred.fulfill(true);
-                return deferred;
+                return deferred.promise;
             }
         }
     };

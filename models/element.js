@@ -131,7 +131,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                     if (baseOverride) {
                         deferred = nemo.wd.promise.defer();
                         deferred.fulfill(true);
-                        return deferred;
+                        return deferred.promise;
                     } else {
                         return base.isBasePresent();
                     }
@@ -161,7 +161,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return nemo.driver.wait(function () {
                 return base.isPresent(baseElement).then(function (isPresent) {
                     return isPresent;
-                }).thenCatch(function (err) {
+                }).catch(function (err) {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -171,7 +171,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
             return nemo.driver.wait(function () {
                 return base.isPresent(baseElement).then(function (isPresent) {
                     return !isPresent;
-                }).thenCatch(function () {
+                }).catch(function () {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -180,7 +180,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
         waitForDisplayed: function (baseElement) {
             base.waitForPresent(baseElement);
             return nemo.driver.wait(function () {
-                return base.get(baseElement).isDisplayed().thenCatch(function (err) {
+                return base.get(baseElement).isDisplayed().catch(function (err) {
                     return false;
                 });
             }, nemo.page.WAIT_TIMEOUT);
@@ -191,7 +191,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).isDisplayed().then(function (isDisplayed) {
                         return !isDisplayed;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -203,7 +203,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return !!value;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -215,7 +215,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return value == text;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -227,7 +227,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getText().then(function (value) {
                         return value != text;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -239,7 +239,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getAttribute(attribute).then(function (value) {
                         return value == text;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
@@ -251,7 +251,7 @@ var ElementModel = function (config, parent, nemo, drivex) {
                 return nemo.driver.wait(function () {
                     return base.get(baseElement).getAttribute(attribute).then(function (value) {
                         return value != text;
-                    }).thenCatch(function () {
+                    }).catch(function () {
                         return false;
                     });
                 }, nemo.page.WAIT_TIMEOUT);
