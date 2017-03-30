@@ -59,6 +59,7 @@ var ObjectModel = function (config, parent, nemo, drivex) {
                     log('ObjectModel: setValue: No appropriate field found for ' + key);
                 }
             })
+            return nemo.wd.promise.all(promiseList);
         }
     });
 
